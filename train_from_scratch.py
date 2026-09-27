@@ -102,7 +102,7 @@ def train_from_scratch(args):
                                 text = tokenizer.apply_chat_template(messages, tokenize=False)
                                 encoded = tokenizer(text, truncation=True, max_length=max_length)
                                 if len(encoded["input_ids"]) > 10:
-                                    self.examples.append(torch.tensor(encoded["input_ids"], dtype=torch.long))
+                                    self.examples.append(list(encoded["input_ids"]))
                         except Exception:
                             pass
             else:
@@ -113,7 +113,7 @@ def train_from_scratch(args):
                     b = b.strip()
                     if len(b) > 20:
                         encoded = tokenizer(b, truncation=True, max_length=max_length)
-                        self.examples.append(torch.tensor(encoded["input_ids"], dtype=torch.long))
+                        self.examples.append(list(encoded["input_ids"]))
 
             print(f"Successfully compiled {len(self.examples)} training sequences.")
 
@@ -121,10 +121,26 @@ def train_from_scratch(args):
             return len(self.examples)
 
         def __getitem__(self, i):
-            return {"input_ids": self.examples[i], "labels": self.examples[i]}
+            return {"input_ids": self.examples[i]}
+
+    def dynamic_pad_collator(batch):
+        pad_id = tokenizer.pad_token_id if tokenizer.pad_token_id is not None else 3
+        max_len = max(len(x["input_ids"]) for x in batch)
+        padded_inputs, padded_labels, attn_mask = [], [], []
+        for item in batch:
+            ids = item["input_ids"]
+            pad_len = max_len - len(ids)
+            padded_inputs.append(ids + [pad_id] * pad_len)
+            padded_labels.append(ids + [-100] * pad_len)
+            attn_mask.append([1] * len(ids) + [0] * pad_len)
+        return {
+            "input_ids": torch.tensor(padded_inputs, dtype=torch.long),
+            "labels": torch.tensor(padded_labels, dtype=torch.long),
+            "attention_mask": torch.tensor(attn_mask, dtype=torch.long)
+        }
 
     dataset = CounselingTextDataset(args.data_file, tokenizer, max_length=args.max_seq_len)
-    data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
+    data_collator = dynamic_pad_collator
 
     # 4. Check for existing checkpoints to auto-resume multi-day training
     os.makedirs(args.output_dir, exist_ok=True)
