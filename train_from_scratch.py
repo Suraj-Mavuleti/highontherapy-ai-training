@@ -197,7 +197,7 @@ def train_from_scratch(args):
         gradient_accumulation_steps=grad_accum,
         learning_rate=args.learning_rate,
         weight_decay=0.01,
-        warmup_ratio=0.05,
+        warmup_steps=100,
         lr_scheduler_type="cosine",
         logging_steps=10,
         save_steps=args.save_steps,
