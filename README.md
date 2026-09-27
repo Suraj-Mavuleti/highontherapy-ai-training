@@ -16,7 +16,7 @@ Click the badge above or use this direct link to open the notebook directly in G
 
 ## 📈 Scalable Architecture Tiers
 
-Select your tier in Cell 5 (`TIER = "nano"`):
+Select your tier in Cell 5 (defaults to `TIER = "base"` via dropdown):
 
 | Tier | Parameters | Architecture | Recommended Hardware & Time | Best For |
 | :--- | :--- | :--- | :--- | :--- |
