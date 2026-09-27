@@ -212,17 +212,24 @@ def train_from_scratch(args):
     )
 
     # 8. Trainer Execution with Callbacks
-    trainer = Trainer(
-        model=model,
-        args=training_args,
-        train_dataset=dataset,
-        data_collator=data_collator,
-        tokenizer=tokenizer,
-        callbacks=[
+    import inspect
+    trainer_kwargs = {
+        "model": model,
+        "args": training_args,
+        "train_dataset": dataset,
+        "data_collator": data_collator,
+        "callbacks": [
             TimedAutoBackupCallback(backup_interval_seconds=args.backup_interval, output_dir=args.output_dir, tokenizer=tokenizer),
             DynamicResourceUpgraderCallback(check_every_steps=50)
         ]
-    )
+    }
+    sig = inspect.signature(Trainer.__init__).parameters
+    if "processing_class" in sig:
+        trainer_kwargs["processing_class"] = tokenizer
+    elif "tokenizer" in sig:
+        trainer_kwargs["tokenizer"] = tokenizer
+
+    trainer = Trainer(**trainer_kwargs)
 
     print("\nStarting model pre-training from scratch...")
     trainer.train(resume_from_checkpoint=resume_checkpoint)
