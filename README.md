@@ -33,3 +33,13 @@ Select your tier in Cell 5 (defaults to `TIER = "base"` via dropdown):
 - **🚀 Hardware Auto-Upgrader**: Dynamically analyzes GPU VRAM and automatically scales batch size and data loader workers to maximize Tensor Core utilization.
 - **🛡️ Auto-Resume**: Automatically detects the latest checkpoint on Google Drive and continues seamlessly from the exact step and epoch after any Colab disconnect.
 - **1-Click Push**: Automatically exports and publishes the trained model directly to your Hugging Face account (`DeV-ZEr0/highontherapy-native`).
+
+---
+
+## 👨‍💻 Author & Education
+
+* **Suraj Mavuleti (Dev Zero)**
+* 🎓 **Bachelor of Science (BS) in Electronic Systems** — **Indian Institute of Technology, Madras (IIT Madras / IITM)**
+* 🌐 **Official Website & Systems Wiki:** [zero.skillissue.gg](https://zero.skillissue.gg)
+* 💼 **LinkedIn Profile:** [linkedin.com/in/suraj-mavuleti-b95993320](https://www.linkedin.com/in/suraj-mavuleti-b95993320)
+* 🐙 **GitHub:** [@Suraj-Mavuleti](https://github.com/Suraj-Mavuleti)
